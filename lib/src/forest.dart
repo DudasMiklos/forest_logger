@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/foundation.dart';
+import 'package:forest_logger/src/log_levels.dart';
 import 'package:logging/logging.dart';
 
 class Forest {
@@ -63,103 +64,95 @@ class Forest {
     );
   }
 
-  static const LOG_LEVEL_CRITICAL = 0;
-  static const LOG_LEVEL_ERROR = 1;
-  static const LOG_LEVEL_SUCCESS = 2;
-  static const LOG_LEVEL_WARNING = 3;
-  static const LOG_LEVEL_INFO = 4;
-  static const LOG_LEVEL_DEBUG = 5;
-  static const LOG_LEVEL_NOTSET = 6;
-  static const LOG_LEVEL_SYSTEM = 7;
-
   ///---
   /// critical Logs to console in black, use for code breaking logs, LOG_LEVEL: 50
   ///---
   static void critical(String text) {
-    _createLog(text, logLevel: LOG_LEVEL_CRITICAL);
+    _createLog(text, logLevel: LogLevel.logLevelCritical);
   }
 
   ///---
   /// error Logs to console in red, use for when a error accours tipically in a try - catch, LOG_LEVEL: 40
   ///---
   static void error(String text) {
-    _createLog(text, logLevel: LOG_LEVEL_ERROR);
+    _createLog(text, logLevel: LogLevel.logLevelError);
   }
 
   ///---
   /// success Logs to console in green, use for log success events, LOG_LEVEL: 0
   ///---
   static void success(String text) {
-    _createLog(text, logLevel: LOG_LEVEL_SUCCESS);
+    _createLog(text, logLevel: LogLevel.logLevelSuccess);
   }
 
   ///---
   /// warning Logs to console in yellow, use when warning accours, example api response is not nominal, LOG_LEVEL: 30
   ///---
   static void warning(String text) {
-    _createLog(text, logLevel: LOG_LEVEL_WARNING);
+    _createLog(text, logLevel: LogLevel.logLevelWarning);
   }
 
   ///---
   /// info Logs to console in blue, use for info prints, LOG_LEVEL: 20
   ///---
   static void info(String text) {
-    _createLog(text, logLevel: LOG_LEVEL_INFO);
+    _createLog(text, logLevel: LogLevel.logLevelInfo);
   }
 
   ///---
   /// debug Logs to console in magenta, use for debug prints, LOG_LEVEL: 10
   ///---
   static void debug(String text) {
-    _createLog(text, logLevel: LOG_LEVEL_DEBUG);
+    _createLog(text, logLevel: LogLevel.logLevelDebug);
   }
 
   ///---
   /// notSet Logs to console in cyan, use for plan text, LOG_LEVEL: 0
   ///---
   static void notSet(String text) {
-    _createLog(text, logLevel: LOG_LEVEL_NOTSET);
+    _createLog(text, logLevel: LogLevel.logLevelNotset);
   }
 
   ///---
   /// systemLog Logs to console in white, LOG_LEVEL: 0 - 50
   ///---
   static void systemLog(String text) {
-    _createLog(text, logLevel: LOG_LEVEL_SYSTEM);
+    _createLog(text, logLevel: LogLevel.logLevelSystem);
   }
 
-  static void _createLog(String text, {int logLevel = LOG_LEVEL_INFO}) {
+  static void _createLog(String text,
+      {LogLevel logLevel = LogLevel.logLevelInfo}) {
     DateTime now = DateTime.now();
-    String messageToLog =
-        showDetailsInLog ? "${now.toString()} : ${text}" : text;
-    ;
+    String messageToLog = showDetailsInLog ? "${now.toString()} : $text" : text;
 
     switch (logLevel) {
-      case LOG_LEVEL_CRITICAL:
+      case LogLevel.logLevelCritical:
         _createEvent('\x1B[30m$messageToLog\x1B[0m', name: 'CRITICAL');
         break;
-      case LOG_LEVEL_ERROR:
+      case LogLevel.logLevelError:
         _createEvent('\x1B[31m$messageToLog\x1B[0m', name: 'ERROR');
         break;
-      case LOG_LEVEL_SUCCESS:
+      case LogLevel.logLevelSuccess:
         _createEvent('\x1B[32m$messageToLog\x1B[0m', name: 'SUCCESS');
         break;
-      case LOG_LEVEL_WARNING:
+      case LogLevel.logLevelWarning:
         _createEvent('\x1B[33m$messageToLog\x1B[0m', name: 'WARNING');
         break;
-      case LOG_LEVEL_INFO:
+      case LogLevel.logLevelInfo:
         _createEvent('\x1B[34m$messageToLog\x1B[0m', name: 'INFO');
         break;
-      case LOG_LEVEL_DEBUG:
+      case LogLevel.logLevelDebug:
         _createEvent('\x1B[35m$messageToLog\x1B[0m', name: 'DEBUG');
         break;
-      case LOG_LEVEL_NOTSET:
+      case LogLevel.logLevelNotset:
         _createEvent('\x1B[36m$messageToLog\x1B[0m', name: 'NOTSET');
         break;
-      case LOG_LEVEL_SYSTEM:
+      case LogLevel.logLevelSystem:
         _createEvent('\x1B[37m$messageToLog\x1B[0m', name: 'SYSTEM');
         break;
       default:
+        _createEvent('\x1B[34m$messageToLog\x1B[0m', name: 'INFO');
+        break;
     }
   }
 
