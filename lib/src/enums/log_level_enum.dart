@@ -1,10 +1,10 @@
-enum LogLevel {
+enum ForestLogLevel {
   logLevelCritical,
   logLevelError,
   logLevelSuccess,
   logLevelWarning,
   logLevelInfo,
   logLevelDebug,
-  logLevelNotset,
+  logLevelNotSet,
   logLevelSystem
 }
