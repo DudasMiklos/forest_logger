@@ -3,7 +3,7 @@
 * iOS, macOS support added
 * Dependency update
 
-## 1.a.0
+## 1.0.0
 
 * First stable version
 
