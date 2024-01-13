@@ -1,5 +1,10 @@
 ## 0.1.0
 
+* iOS, macOS support added
+* Dependency update
+
+## 0.1.0
+
 * Code refactoring, made compatible with IntelliJ IDEA console
 
 ## 0.0.1

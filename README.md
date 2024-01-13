@@ -1,5 +1,5 @@
 # Forest Logger
-![build](https://img.shields.io/badge/build-passing-33FF00?style=flat) ![version](https://img.shields.io/badge/version-1.0.0-3887BE?style=flat)
+![build](https://img.shields.io/badge/build-passing-33FF00?style=flat) ![version](https://img.shields.io/badge/version-1.1.0-3887BE?style=flat)
 
 ## Overview
 Forest Logger is a comprehensive logging tool designed to facilitate easy and efficient logging in software applications. This document provides detailed information on how to use its various functionalities.
