@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
@@ -132,42 +134,80 @@ class Forest {
 
   static void _writeLog({required String text, required String label, ForestColor color  = ForestColor.blue,}) {
     if(useSeparators){
-      //ignore: avoid_print
-      print('${color.value}${ForestWeight.bold.value} ------------------------------------------------------------------------------------------');
+      if(Platform.isIOS || Platform.isMacOS){
+        //ignore: avoid_print
+        print('------------------------------------------------------------------------------------------');
+      }else{
+        //ignore: avoid_print
+        print('${color.value}${ForestWeight.bold.value} ------------------------------------------------------------------------------------------');
+      }
     }
     if (kDebugMode && isDebugModeEnabled) {
       if(useTimestamps){
         DateTime now = DateTime.now();
-        //ignore: avoid_print
-        print(
-            ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        if(Platform.isIOS || Platform.isMacOS){
+          //ignore: avoid_print
+          print(' [$label] [${now.toString()}]: $text');
+        }else{
+          //ignore: avoid_print
+          print(
+              ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        }
       }else{
-        //ignore: avoid_print
-        print(
-            ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        if(Platform.isIOS || Platform.isMacOS){
+          //ignore: avoid_print
+          print(
+              ' [$label]: $text');
+        }else{
+          //ignore: avoid_print
+          print(
+              ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        }
       }
     }    else if (kProfileMode && isProfileModeEnabled) {
       if(useTimestamps){
         DateTime now = DateTime.now();
-        //ignore: avoid_print
-        print(
-            ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        if(Platform.isIOS || Platform.isMacOS){
+          //ignore: avoid_print
+          print(' [$label] [${now.toString()}]: $text');
+        }else{
+          //ignore: avoid_print
+          print(
+              ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        }
       }else{
-        //ignore: avoid_print
-        print(
-            ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        if(Platform.isIOS || Platform.isMacOS){
+          //ignore: avoid_print
+          print(
+              ' [$label]: $text');
+        }else{
+          //ignore: avoid_print
+          print(
+              ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        }
       }
     }
     else if (kReleaseMode && isReleaseModeEnabled) {
       if(useTimestamps){
         DateTime now = DateTime.now();
-        //ignore: avoid_print
-        print(
-            ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        if(Platform.isIOS || Platform.isMacOS){
+          //ignore: avoid_print
+          print(' [$label] [${now.toString()}]: $text');
+        }else{
+          //ignore: avoid_print
+          print(
+              ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        }
       }else{
-        //ignore: avoid_print
-        print(
-            ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        if(Platform.isIOS || Platform.isMacOS){
+          //ignore: avoid_print
+          print(
+              ' [$label]: $text');
+        }else{
+          //ignore: avoid_print
+          print(
+              ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
+        }
       }
     }
   }
