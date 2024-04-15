@@ -1,3 +1,7 @@
+## 1.1.1
+
+* showSystemLogs added to the init() function.
+
 ## 1.1.0
 
 * iOS, macOS support added
