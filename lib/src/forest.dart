@@ -7,7 +7,6 @@ import 'enums/color_enum.dart';
 import 'enums/weight_enum.dart';
 
 class Forest {
-
   ///Stores the debug log enable state
   static late bool _isDebugModeEnabled;
 
@@ -22,6 +21,9 @@ class Forest {
 
   ///Stores the time stamps enable state
   static late bool _useSeparators;
+
+  ///Stores the system log enable state
+  static late bool _showSystemLogs;
 
   /// Returns the hostname
   static bool get isDebugModeEnabled {
@@ -48,6 +50,11 @@ class Forest {
     return _useSeparators;
   }
 
+  /// Returns the system log state
+  static bool get showSystemLogs {
+    return _showSystemLogs;
+  }
+
   /// Initializes the Library
   /// Optional parameters:
   /// [isDebugModeEnabled] -> defaults to: `false` -> enables debug logs
@@ -55,23 +62,28 @@ class Forest {
   /// [isReleaseModeEnabled] -> defaults to: `false` -> enables release logs
   /// [useTimestamps] -> defaults to: `false` -> enables timestamps in logs
   /// [useSeparators] -> defaults to: `false` -> enables top dotted separator in console
+  /// [showSystemLogs] -> defaults to: `true` -> enables system logs
   static void init({
     bool isDebugModeEnabled = true,
     bool isProfileModeEnabled = false,
     bool isReleaseModeEnabled = false,
     bool useTimestamps = false,
     bool useSeparators = false,
+    bool showSystemLogs = true,
   }) {
     _isDebugModeEnabled = isDebugModeEnabled;
     _isProfileModeEnabled = isProfileModeEnabled;
     _isReleaseModeEnabled = isReleaseModeEnabled;
     _useTimestamps = useTimestamps;
     _useSeparators = useSeparators;
+    _showSystemLogs = showSystemLogs;
 
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen(
-          (data) {
-        systemLog(data.message);
+      (data) {
+        if (_showSystemLogs) {
+          systemLog(data.message);
+        }
       },
     );
   }
@@ -132,78 +144,80 @@ class Forest {
     _writeLog(text: text, label: "SYSTEM LOG", color: ForestColor.white);
   }
 
-  static void _writeLog({required String text, required String label, ForestColor color  = ForestColor.blue,}) {
-    if(useSeparators){
-      if(Platform.isIOS || Platform.isMacOS){
+  static void _writeLog({
+    required String text,
+    required String label,
+    ForestColor color = ForestColor.blue,
+  }) {
+    if (useSeparators) {
+      if (Platform.isIOS || Platform.isMacOS) {
         //ignore: avoid_print
-        print('------------------------------------------------------------------------------------------');
-      }else{
+        print(
+            '------------------------------------------------------------------------------------------');
+      } else {
         //ignore: avoid_print
-        print('${color.value}${ForestWeight.bold.value} ------------------------------------------------------------------------------------------');
+        print(
+            '${color.value}${ForestWeight.bold.value} ------------------------------------------------------------------------------------------');
       }
     }
     if (kDebugMode && isDebugModeEnabled) {
-      if(useTimestamps){
+      if (useTimestamps) {
         DateTime now = DateTime.now();
-        if(Platform.isIOS || Platform.isMacOS){
+        if (Platform.isIOS || Platform.isMacOS) {
           //ignore: avoid_print
           print(' [$label] [${now.toString()}]: $text');
-        }else{
+        } else {
           //ignore: avoid_print
           print(
               ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
         }
-      }else{
-        if(Platform.isIOS || Platform.isMacOS){
+      } else {
+        if (Platform.isIOS || Platform.isMacOS) {
           //ignore: avoid_print
-          print(
-              ' [$label]: $text');
-        }else{
+          print(' [$label]: $text');
+        } else {
           //ignore: avoid_print
           print(
               ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
         }
       }
-    }    else if (kProfileMode && isProfileModeEnabled) {
-      if(useTimestamps){
+    } else if (kProfileMode && isProfileModeEnabled) {
+      if (useTimestamps) {
         DateTime now = DateTime.now();
-        if(Platform.isIOS || Platform.isMacOS){
+        if (Platform.isIOS || Platform.isMacOS) {
           //ignore: avoid_print
           print(' [$label] [${now.toString()}]: $text');
-        }else{
+        } else {
           //ignore: avoid_print
           print(
               ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
         }
-      }else{
-        if(Platform.isIOS || Platform.isMacOS){
+      } else {
+        if (Platform.isIOS || Platform.isMacOS) {
           //ignore: avoid_print
-          print(
-              ' [$label]: $text');
-        }else{
+          print(' [$label]: $text');
+        } else {
           //ignore: avoid_print
           print(
               ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
         }
       }
-    }
-    else if (kReleaseMode && isReleaseModeEnabled) {
-      if(useTimestamps){
+    } else if (kReleaseMode && isReleaseModeEnabled) {
+      if (useTimestamps) {
         DateTime now = DateTime.now();
-        if(Platform.isIOS || Platform.isMacOS){
+        if (Platform.isIOS || Platform.isMacOS) {
           //ignore: avoid_print
           print(' [$label] [${now.toString()}]: $text');
-        }else{
+        } else {
           //ignore: avoid_print
           print(
               ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
         }
-      }else{
-        if(Platform.isIOS || Platform.isMacOS){
+      } else {
+        if (Platform.isIOS || Platform.isMacOS) {
           //ignore: avoid_print
-          print(
-              ' [$label]: $text');
-        }else{
+          print(' [$label]: $text');
+        } else {
           //ignore: avoid_print
           print(
               ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
