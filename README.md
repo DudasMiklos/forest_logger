@@ -29,6 +29,7 @@ Initializes the Forest Logger library with various logging configurations.
 - `isReleaseModeEnabled`: (bool, default `false`) Enables release logs.
 - `useTimestamps`: (bool, default `false`) Enables timestamps in logs.
 - `useSeparators`: (bool, default `false`) Enables a dotted separator in the console logs.
+- `showSystemLogs`: (bool, default `true`) Enables system logs.
 
 #### Description:
 This function sets up the logger with the specified configurations, allowing for tailored logging experiences in different modes (debug, profile, release). It includes options for timestamps and console separators for enhanced log readability.
