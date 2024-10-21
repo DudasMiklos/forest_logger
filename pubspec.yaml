@@ -1,9 +1,9 @@
 name: forest_logger
 description: A Logger to create beautiful logs in Flutter.
-version: 1.1.1
-homepage: https://dudasmiklos.com/
+version: 1.1.2
+homepage: https://forestapp.dev
 repository: https://github.com/DudasMiklos/forest_logger
-documentation: https://dudasmiklos.com/
+documentation: https://forestapp.dev
 
 environment:
   sdk: '>=2.19.6 <4.0.0'
