@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Started adding online logging capabilities, build fails for now! USE v1.1.1!
+
 ## 1.1.1
 
 * showSystemLogs added to the init() function.

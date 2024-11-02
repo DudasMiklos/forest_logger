@@ -1,147 +1,151 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
-
+import 'services/auth_service.dart';
 import 'enums/color_enum.dart';
 import 'enums/weight_enum.dart';
 
 class Forest {
-  ///Stores the debug log enable state
+  /// Stores the debug log enable state.
   static late bool _isDebugModeEnabled;
 
-  ///Stores the profile log enable state
+  /// Stores the profile log enable state.
   static late bool _isProfileModeEnabled;
 
-  ///Stores the release log enable state
+  /// Stores the release log enable state.
   static late bool _isReleaseModeEnabled;
 
-  ///Stores the time stamps enable state
+  /// Stores the timestamps enable state.
   static late bool _useTimestamps;
 
-  ///Stores the time stamps enable state
+  /// Stores the separators enable state.
   static late bool _useSeparators;
 
-  ///Stores the system log enable state
+  /// Stores the system log enable state.
   static late bool _showSystemLogs;
 
-  /// Returns the hostname
-  static bool get isDebugModeEnabled {
-    return _isDebugModeEnabled;
-  }
+  /// Stores the auth token if successful auth.
+  static String? _authToken;
 
-  /// Returns the hostname
-  static bool get isProfileModeEnabled {
-    return _isProfileModeEnabled;
-  }
+  /// Stores the PID.
+  static late String _pid;
 
-  /// Returns the hostname
-  static bool get isReleaseModeEnabled {
-    return _isReleaseModeEnabled;
-  }
+  /// Stores the API key.
+  static late String _apiKey;
 
-  /// Returns the timestamp state
-  static bool get useTimestamps {
-    return _useTimestamps;
-  }
+  /// Returns whether debug mode logging is enabled.
+  static bool get isDebugModeEnabled => _isDebugModeEnabled;
 
-  /// Returns the separator state
-  static bool get useSeparators {
-    return _useSeparators;
-  }
+  /// Returns whether profile mode logging is enabled.
+  static bool get isProfileModeEnabled => _isProfileModeEnabled;
 
-  /// Returns the system log state
-  static bool get showSystemLogs {
-    return _showSystemLogs;
-  }
+  /// Returns whether release mode logging is enabled.
+  static bool get isReleaseModeEnabled => _isReleaseModeEnabled;
 
-  /// Initializes the Library
-  /// Optional parameters:
-  /// [isDebugModeEnabled] -> defaults to: `false` -> enables debug logs
-  /// [isProfileModeEnabled] -> defaults to: `false` -> enables profile logs
-  /// [isReleaseModeEnabled] -> defaults to: `false` -> enables release logs
-  /// [useTimestamps] -> defaults to: `false` -> enables timestamps in logs
-  /// [useSeparators] -> defaults to: `false` -> enables top dotted separator in console
-  /// [showSystemLogs] -> defaults to: `true` -> enables system logs
-  static void init({
+  /// Returns the timestamp state.
+  static bool get useTimestamps => _useTimestamps;
+
+  /// Returns the separator state.
+  static bool get useSeparators => _useSeparators;
+
+  /// Returns the system log state.
+  static bool get showSystemLogs => _showSystemLogs;
+
+  /// Returns the auth token.
+  static String? get authToken => _authToken;
+
+  /// Initializes the library with optional parameters.
+  ///
+  /// [pid] and [apiKey] are required for authentication.
+  /// [isDebugModeEnabled] enables debug logs (default: `true`).
+  /// [isProfileModeEnabled] enables profile logs (default: `false`).
+  /// [isReleaseModeEnabled] enables release logs (default: `false`).
+  /// [useTimestamps] enables timestamps in logs (default: `false`).
+  /// [useSeparators] enables top dotted separator in console (default: `false`).
+  /// [showSystemLogs] enables system logs (default: `true`).
+  static Future<void> init({
+    required String pid,
+    required String apiKey,
     bool isDebugModeEnabled = true,
     bool isProfileModeEnabled = false,
     bool isReleaseModeEnabled = false,
     bool useTimestamps = false,
     bool useSeparators = false,
     bool showSystemLogs = true,
-  }) {
+  }) async {
     _isDebugModeEnabled = isDebugModeEnabled;
     _isProfileModeEnabled = isProfileModeEnabled;
     _isReleaseModeEnabled = isReleaseModeEnabled;
     _useTimestamps = useTimestamps;
     _useSeparators = useSeparators;
     _showSystemLogs = showSystemLogs;
+    _pid = pid;
+    _apiKey = apiKey;
+
+    // Load environment variables
+    await dotenv.load(fileName: '.env');
+
+    // Initialize the AuthService and get the token
+    try {
+      final authService = AuthService();
+      final token = await authService.login(_pid, _apiKey);
+      if (token != null) {
+        _authToken = token;
+        debug('Authentication successful. Token acquired.');
+      } else {
+        error('Authentication failed. Token not received.');
+      }
+    } catch (e) {
+      error('An error occurred during authentication: $e');
+    }
 
     Logger.root.level = Level.ALL;
-    Logger.root.onRecord.listen(
-      (data) {
-        if (_showSystemLogs) {
-          systemLog(data.message);
-        }
-      },
-    );
+    Logger.root.onRecord.listen((data) {
+      if (_showSystemLogs) {
+        systemLog(data.message);
+      }
+    });
   }
 
-  ///---
-  /// critical Logs to console in red, use for code breaking logs, LOG_LEVEL: 50
-  ///---
+  /// Logs a critical message in red.
   static void critical(String text) {
-    _writeLog(text: text, label: "CRITICAL", color: ForestColor.red);
+    _writeLog(text: text, label: 'CRITICAL', color: ForestColor.red);
   }
 
-  ///---
-  /// error Logs to console in red, use for when a error accours tipically in a try - catch, LOG_LEVEL: 40
-  ///---
+  /// Logs an error message in red.
   static void error(String text) {
-    _writeLog(text: text, label: "ERROR", color: ForestColor.red);
+    _writeLog(text: text, label: 'ERROR', color: ForestColor.red);
   }
 
-  ///---
-  /// success Logs to console in green, use for log success events, LOG_LEVEL: 0
-  ///---
+  /// Logs a success message in green.
   static void success(String text) {
-    _writeLog(text: text, label: "SUCCESS", color: ForestColor.green);
+    _writeLog(text: text, label: 'SUCCESS', color: ForestColor.green);
   }
 
-  ///---
-  /// warning Logs to console in yellow, use when warning accours, example api response is not nominal, LOG_LEVEL: 30
-  ///---
+  /// Logs a warning message in yellow.
   static void warning(String text) {
-    _writeLog(text: text, label: "WARNING", color: ForestColor.yellow);
+    _writeLog(text: text, label: 'WARNING', color: ForestColor.yellow);
   }
 
-  ///---
-  /// info Logs to console in blue, use for info prints, LOG_LEVEL: 20
-  ///---
+  /// Logs an info message in blue.
   static void info(String text) {
-    _writeLog(text: text, label: "INFO", color: ForestColor.blue);
+    _writeLog(text: text, label: 'INFO', color: ForestColor.blue);
   }
 
-  ///---
-  /// debug Logs to console in magenta, use for debug prints, LOG_LEVEL: 10
-  ///---
+  /// Logs a debug message in magenta.
   static void debug(String text) {
-    _writeLog(text: text, label: "DEBUG", color: ForestColor.magenta);
+    _writeLog(text: text, label: 'DEBUG', color: ForestColor.magenta);
   }
 
-  ///---
-  /// "todo" not set Logs to console in cyan, use for plan text or todo texts, LOG_LEVEL: 0
-  ///---
+  /// Logs a todo message in cyan.
   static void todo(String text) {
-    _writeLog(text: text, label: "TODO", color: ForestColor.cyan);
+    _writeLog(text: text, label: 'TODO', color: ForestColor.cyan);
   }
 
-  ///---
-  /// systemLog Logs to console in white, LOG_LEVEL: 0 - 50
-  ///---
+  /// Logs a system message in white.
   static void systemLog(String text) {
-    _writeLog(text: text, label: "SYSTEM LOG", color: ForestColor.white);
+    _writeLog(text: text, label: 'SYSTEM LOG', color: ForestColor.white);
   }
 
   static void _writeLog({
@@ -149,80 +153,47 @@ class Forest {
     required String label,
     ForestColor color = ForestColor.blue,
   }) {
-    if (useSeparators) {
-      if (Platform.isIOS || Platform.isMacOS) {
-        //ignore: avoid_print
-        print(
-            '------------------------------------------------------------------------------------------');
-      } else {
-        //ignore: avoid_print
-        print(
-            '${color.value}${ForestWeight.bold.value} ------------------------------------------------------------------------------------------');
-      }
+    if (!_isLoggingEnabled()) return;
+
+    if(authToken == null) return;
+
+    if (_useSeparators) {
+      _printSeparator(color);
     }
-    if (kDebugMode && isDebugModeEnabled) {
-      if (useTimestamps) {
-        DateTime now = DateTime.now();
-        if (Platform.isIOS || Platform.isMacOS) {
-          //ignore: avoid_print
-          print(' [$label] [${now.toString()}]: $text');
-        } else {
-          //ignore: avoid_print
-          print(
-              ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
-        }
-      } else {
-        if (Platform.isIOS || Platform.isMacOS) {
-          //ignore: avoid_print
-          print(' [$label]: $text');
-        } else {
-          //ignore: avoid_print
-          print(
-              ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
-        }
-      }
-    } else if (kProfileMode && isProfileModeEnabled) {
-      if (useTimestamps) {
-        DateTime now = DateTime.now();
-        if (Platform.isIOS || Platform.isMacOS) {
-          //ignore: avoid_print
-          print(' [$label] [${now.toString()}]: $text');
-        } else {
-          //ignore: avoid_print
-          print(
-              ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
-        }
-      } else {
-        if (Platform.isIOS || Platform.isMacOS) {
-          //ignore: avoid_print
-          print(' [$label]: $text');
-        } else {
-          //ignore: avoid_print
-          print(
-              ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
-        }
-      }
-    } else if (kReleaseMode && isReleaseModeEnabled) {
-      if (useTimestamps) {
-        DateTime now = DateTime.now();
-        if (Platform.isIOS || Platform.isMacOS) {
-          //ignore: avoid_print
-          print(' [$label] [${now.toString()}]: $text');
-        } else {
-          //ignore: avoid_print
-          print(
-              ' ${color.value}${ForestWeight.bold.value}[$label] [${now.toString()}]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
-        }
-      } else {
-        if (Platform.isIOS || Platform.isMacOS) {
-          //ignore: avoid_print
-          print(' [$label]: $text');
-        } else {
-          //ignore: avoid_print
-          print(
-              ' ${color.value}${ForestWeight.bold.value}[$label]:${ForestWeight.normal.value}${color.value} $text${ForestWeight.normal.value}');
-        }
-      }
+
+    final timestamp = _useTimestamps ? ' [${DateTime.now()}]' : '';
+    final formattedLabel = '[$label]$timestamp: ';
+
+    if (Platform.isIOS || Platform.isMacOS) {
+      // Color codes may not be supported.
+      //ignore: avoid_print
+      print(' $formattedLabel$text');
+    } else {
+      final coloredLabel =
+          '${ForestWeight.bold.value}${color.value}$formattedLabel${ForestWeight.normal.value}${color.value}';
+      final reset = ForestWeight.normal.value;
+      //ignore: avoid_print
+      print(' $coloredLabel$text$reset');
+    }
+  }
+
+  static bool _isLoggingEnabled() {
+    if (kDebugMode && _isDebugModeEnabled) return true;
+    if (kProfileMode && _isProfileModeEnabled) return true;
+    if (kReleaseMode && _isReleaseModeEnabled) return true;
+    return false;
+  }
+
+  static void _printSeparator(ForestColor color) {
+    const separatorLine =
+        '------------------------------------------------------------------------------------------';
+    if (Platform.isIOS || Platform.isMacOS) {
+      //ignore: avoid_print
+      print(separatorLine);
+    } else {
+      //ignore: avoid_print
+      print(
+          '${color.value}${ForestWeight.bold.value} $separatorLine${ForestWeight.normal.value}');
     }
   }
 }

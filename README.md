@@ -1,5 +1,8 @@
 # Forest Logger
-![build](https://img.shields.io/badge/build-passing-33FF00?style=flat) ![version](https://img.shields.io/badge/version-1.1.0-3887BE?style=flat)
+![build](https://img.shields.io/badge/build-fails-FF0000?style=flat) ![version](https://img.shields.io/badge/version-1.2.0-3887BE?style=flat)
+
+## BUILD FAILING! USE v1.1.1!
+### 1.2.x is currently in DEV stage, if you feel like testing it, or contribute to it contact me via github or email.
 
 ## Overview
 Forest Logger is a comprehensive logging tool designed to facilitate easy and efficient logging in software applications. This document provides detailed information on how to use its various functionalities.
@@ -24,6 +27,8 @@ $ flutter pub get
 Initializes the Forest Logger library with various logging configurations.
 
 #### Parameters:
+- `pid`: (string) {required} The PID of the application.
+- `apiKey`: (string) {required} The API key for the application.
 - `isDebugModeEnabled`: (bool, default `false`) Enables debug logs.
 - `isProfileModeEnabled`: (bool, default `false`) Enables profile logs.
 - `isReleaseModeEnabled`: (bool, default `false`) Enables release logs.
@@ -37,6 +42,8 @@ This function sets up the logger with the specified configurations, allowing for
 #### Example:
 ```dart
 Forest.init(
+  pid: "8c96238b-e054-43bc-ad81-be03c02e11c9",
+  apiKey: "dev-25f69d-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   isDebugModeEnabled: true,
   useTimestamps: true,
   useSeparators: true,

@@ -9,9 +9,7 @@ enum ForestColor {
   grey("\x1B[37m"),
   white("\x1B[38m");
 
-  final String _value;
+  final String value;
 
-  String get value => _value;
-
-  const ForestColor(this._value);
+  const ForestColor(this.value);
 }
